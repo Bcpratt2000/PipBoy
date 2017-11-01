@@ -7,7 +7,6 @@ SoftwareSerial master = SoftwareSerial(8, 9); //use pins 8 and 9 to talk to othe
 int moveX, moveY, leftClick, rightClick;
 int oldLeftClick = 0;
 int oldRightClick = 0;
-int mode;
 
 void setup() {
 
@@ -30,7 +29,7 @@ void loop() {
 
 
 void checkMouse() {
-  if (master.read() == 'M') {
+  if (master.read() == (int)'M') {
     //get serial values
     moveX = master.parseInt();
     moveY = master.parseInt();

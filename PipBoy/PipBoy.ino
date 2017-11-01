@@ -23,7 +23,7 @@ char mouseSensitivity = 4;
 
 //10 char max
 String Titles[] = {
-  "Mouse", "Home", "Overbrightl"
+  "Mouse", "Home", "Overbright"
 };
 
 Point p = Point(0, 0, 0);
@@ -302,15 +302,15 @@ void startMouse() {
         oldY = p.y;
 
       }
-      slave.println("M");
+      slave.println((int)'M');
       //change in x
-      slave.println(moveX * mouseSensitivity);
+      slave.println((int)(moveX * mouseSensitivity));
       //change in y
-      slave.println(moveY * mouseSensitivity);
+      slave.println((int)(moveY * mouseSensitivity));
       //leftMouse
-      slave.println(leftMouse);
+      slave.println((int)leftMouse);
       //rightMouse
-      slave.println(rightMouse);
+      slave.println((int)rightMouse);
 
       isFirst = false;
 
