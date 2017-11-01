@@ -13,9 +13,9 @@
 long oldTimeRunning = 0;
 char page = 1;
 char numOfPages = 3;
-char hours = 5;
-char minutes = 40;
-char seconds = 50;
+char hours = (String(__TIME__).substring(0, 2)).toInt()%12;
+char minutes = (String(__TIME__).substring(3, 5)).toInt();
+char seconds = (String(__TIME__).substring(6, 8)).toInt();
 boolean overBright = false;
 boolean mouseEnabled = false;
 
