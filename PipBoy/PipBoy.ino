@@ -1,16 +1,14 @@
-
+#include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <stdint.h>
-#include <SD.h>
-#include <SeeedTouchScreen.h>
-#include <TFTv2.h>
+//#include <SD.h>
+#include "lib/Touch_Screen_Driver-master/SeeedTouchScreen.cpp"
+#include "lib/TFT_Touch_Shield_V2-master/TFTv2.cpp"
 #include <SPI.h>
 
 //Arduino uses RGB565 colors
-#define MAIN_COLOR 0x07E0
+#define MAIN_COLOR 0x07E0 
 #define BKG_COLOR  0x11C1
-
-Point p;
 
 long oldTimeRunning = 0;
 int page = 1;
@@ -23,13 +21,17 @@ boolean mouseEnabled = false;
 
 int mouseSensitivity = 4;
 
-//9 char max
+//10 char max
 String Titles[] = {
   "Mouse", "Home", "Overbright"
 };
 
+Point p = Point(0, 0, 0);
+
 TouchScreen ts = TouchScreen (XP, YP, XM, YM);
 SoftwareSerial slave = SoftwareSerial(2, 3); //use pins 2 and 3 to talk to other chip
+//TFT Tft = TFT();
+
 
 void setup() {
 

@@ -1,6 +1,6 @@
+#include <Mouse.h>
 #include <SoftwareSerial.h>
 #include <SPI.h>
-#include <Mouse.h>
 
 SoftwareSerial master = SoftwareSerial(8, 9); //use pins 8 and 9 to talk to other chip
 
