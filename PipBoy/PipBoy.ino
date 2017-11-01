@@ -13,8 +13,8 @@
 long oldTimeRunning = 0;
 char page = 1;
 char numOfPages = 3;
-char hours = 12;
-char minutes = 29;
+char hours = 5;
+char minutes = 40;
 char seconds = 50;
 boolean overBright = false;
 boolean mouseEnabled = false;
@@ -26,7 +26,7 @@ String Titles[] = {
   "Mouse", "Home", "Overbright"
 };
 
-Point p = Point(0, 0, 0);
+Point p;
 
 TouchScreen ts = TouchScreen (XP, YP, XM, YM);
 SoftwareSerial slave = SoftwareSerial(2, 3); //use pins 2 and 3 to talk to other chip
@@ -38,7 +38,7 @@ void setup() {
   Tft.TFTinit();
   Serial.begin(115200);
   slave.begin(9600);
-  updateScreen();
+  redrawScreen();
 }//end setup
 
 
@@ -94,9 +94,9 @@ void drawScreen(int pX, int pY) {
     drawString("2OOO Mini", 40, 150, 3, MAIN_COLOR);
 
     //draw Time
-    drawString((String)hours, 55, 240, 4, MAIN_COLOR);
+    drawString((String)(int)hours, 55, 240, 4, MAIN_COLOR);
     drawString(":", 105, 240, 4, MAIN_COLOR);
-    drawString((String)minutes, 125, 240, 4, MAIN_COLOR);
+    drawString((String)(int)minutes, 125, 240, 4, MAIN_COLOR);
 
   }
 
@@ -114,7 +114,7 @@ void drawScreen(int pX, int pY) {
     drawString("toggle OverBright", 20, 200, 2, MAIN_COLOR);
   }
   else {
-    drawString("This Page is not avalable", 10, 100, 1, MAIN_COLOR);
+    drawString("There has been no backend written for this page", 10, 100, 1, MAIN_COLOR);
   }
 
   //_____________________________________________________________
@@ -141,7 +141,7 @@ void drawScreen(int pX, int pY) {
       if (page == -1) {
         page = 0;
       }
-      updateScreen();
+      redrawScreen();
     }
     //Right arrow
     if (pX < 240 && pX > 180 && pY < 60 && pY > 0) {
@@ -149,7 +149,7 @@ void drawScreen(int pX, int pY) {
       if (page == numOfPages) {
         page = numOfPages - 1;
       }
-      updateScreen();
+      redrawScreen();
     }
   }
 }
@@ -164,30 +164,29 @@ void drawString(String string, int poX, int poY, int size, int fgcolor) {
 
 
 
-void updateScreen() {
+void redrawScreen() {
   Tft.fillRectangle(0, 0, 240, 320, BKG_COLOR);
   drawScreen(-1, -1);
 }
-void updateScreen(int pX, int pY) {
+void redrawScreen(int pX, int pY) {
   Tft.fillRectangle(0, 0, 240, 320, BKG_COLOR);
   drawScreen(pX, pY);
 }
-void updateLower() {
+void redrawLower() {
   Tft.fillRectangle(0, 61, 240, 320, BKG_COLOR);
   drawScreen(-1, -1);
 }
-void updateUpper() {
+void redrawUpper() {
   Tft.fillRectangle(0, 0, 240, 60, BKG_COLOR);
   drawScreen(-1, -1);
 }
 
-void drawStatic() { //blanks out evert other line
+void drawCRTLines() { //blanks out every other line
   for (int index; index < 160; index++) {
     Tft.drawLine(0, index * 2, 240, index * 2, BKG_COLOR);
 
   }
 }
-
 
 //refresh system time vatiables
 boolean updateTime() {
@@ -209,19 +208,18 @@ boolean updateTime() {
       hours = 1;
       minutes = 0;
     }
-    oldTimeRunning = oldTimeRunning + 1000;
+    oldTimeRunning += 1000;
   }
   return timeUpdated;
 }
 
 void setOverBright(boolean state) {
+  overBright = state;
   if (state) {
     Tft.fillRectangle(0, 0, 240, 320, WHITE);
-    overBright = true;
   }
-  else if (!state) {
-    overBright = false;
-    updateScreen();
+  else{
+    redrawScreen();
   }
 }
 
@@ -234,9 +232,6 @@ void startMouse() {
   int moveX;
   int moveY;
   boolean isFirst = true;
-
-  //Change to mode of the slave processor to accept mouse input
-  slave.println("modeMouse");
 
   //blank screen
   Tft.fillRectangle(0, 0, 240, 320, BKG_COLOR);
@@ -263,7 +258,7 @@ void startMouse() {
       if (p.y > 280 && p.x < 320) {
         mouseEnabled = false;
         slave.println("modeReset");
-        updateScreen();
+        redrawScreen();
       }
 
       //check button area
