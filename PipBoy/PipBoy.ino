@@ -11,19 +11,19 @@
 #define BKG_COLOR  0x11C1
 
 long oldTimeRunning = 0;
-int page = 1;
-int numOfPages = 3;
-int hours = 12;
-int minutes = 29;
-int seconds = 50;
+char page = 1;
+char numOfPages = 3;
+char hours = 12;
+char minutes = 29;
+char seconds = 50;
 boolean overBright = false;
 boolean mouseEnabled = false;
 
-int mouseSensitivity = 4;
+char mouseSensitivity = 4;
 
 //10 char max
 String Titles[] = {
-  "Mouse", "Home", "Overbright"
+  "Mouse", "Home", "Overbrightl"
 };
 
 Point p = Point(0, 0, 0);

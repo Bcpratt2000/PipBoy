@@ -117,7 +117,7 @@
 #define INT16U unsigned short
 #endif
 
-extern INT8U simpleFont[][8];
+//extern INT8U simpleFont[][8];
 
 class TFT
 {

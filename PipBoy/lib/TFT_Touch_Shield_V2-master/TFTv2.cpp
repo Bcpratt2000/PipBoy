@@ -22,6 +22,7 @@
 
 #include "TFTv2.h"
 #include <SPI.h>
+#include "font.c"
 #define FONT_SPACE 6
 #define FONT_X 8
 #define FONT_Y 8
