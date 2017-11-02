@@ -7,30 +7,31 @@
 #include <SPI.h>
 
 //Arduino uses RGB565 colors
-#define MAIN_COLOR 0x07E0 
 #define BKG_COLOR  0x11C1
 
-long oldTimeRunning = 0;
-char page = 1;
-char numOfPages = 3;
-char hours = (String(__TIME__).substring(0, 2)).toInt()%12;
-char minutes = (String(__TIME__).substring(3, 5)).toInt();
-char seconds = (String(__TIME__).substring(6, 8)).toInt();
+#define TIME_TO_COMPILE 10
+
+unsigned long oldTimeRunning = 0;
+unsigned char page = 1;
+unsigned char numOfPages = 4;
+unsigned char hours = (String(__TIME__).substring(0, 2)).toInt()%12;
+unsigned char minutes = (String(__TIME__).substring(3, 5)).toInt();
+unsigned char seconds = (String(__TIME__).substring(6, 8)).toInt()+TIME_TO_COMPILE;
 boolean overBright = false;
 boolean mouseEnabled = false;
 
 char mouseSensitivity = 4;
+short MAIN_COLOR = 0x07E0;
 
 //10 char max
 String Titles[] = {
-  "Mouse", "Home", "Overbright"
+  "Mouse", "Home", "Settings", "Overbright"
 };
 
 Point p;
 
 TouchScreen ts = TouchScreen (XP, YP, XM, YM);
 SoftwareSerial slave = SoftwareSerial(2, 3); //use pins 2 and 3 to talk to other chip
-//TFT Tft = TFT();
 
 
 void setup() {
@@ -75,49 +76,6 @@ void loop() {
 
 void drawScreen(int pX, int pY) {
   //_____________________________________________________________
-  //                           Lower
-  //_____________________________________________________________
-  if (Titles[page] == "Mouse") {
-    Tft.drawLine(0, 280, 320, 280, MAIN_COLOR);
-    drawString("Disabled", 20, 290, 2, MAIN_COLOR);
-    if (pY > 280 && pY < 320) {
-      mouseEnabled = !mouseEnabled;
-      startMouse();
-    }
-
-  }
-
-
-  else if (Titles[page] == "Home") {
-    //draw Logo
-    drawString("Pip-Boy", 15, 100, 5, MAIN_COLOR);
-    drawString("2OOO Mini", 40, 150, 3, MAIN_COLOR);
-
-    //draw Time
-    drawString((String)(int)hours, 55, 240, 4, MAIN_COLOR);
-    drawString(":", 105, 240, 4, MAIN_COLOR);
-    drawString((String)(int)minutes, 125, 240, 4, MAIN_COLOR);
-
-  }
-
-  else if (Titles[page] == "Overbright") {
-    if (pY > 60) {
-      if (overBright) {
-        setOverBright(false);
-      }
-      else if (!overBright) {
-        setOverBright(true);
-      }
-
-    }
-    drawString("Tap screen to", 45, 150, 2, MAIN_COLOR);
-    drawString("toggle OverBright", 20, 200, 2, MAIN_COLOR);
-  }
-  else {
-    drawString("There has been no backend written for this page", 10, 100, 1, MAIN_COLOR);
-  }
-
-  //_____________________________________________________________
   //                           Upper
   //_____________________________________________________________
 
@@ -137,21 +95,73 @@ void drawScreen(int pX, int pY) {
     //Check touchscreen
     //Left arrow
     if (pX < 60 && pX > 0 && pY < 60 && pY > 0) {
-      page = page - 1;
-      if (page == -1) {
-        page = 0;
+      if (page!=0) {
+        page --;
       }
       redrawScreen();
     }
     //Right arrow
     if (pX < 240 && pX > 180 && pY < 60 && pY > 0) {
-      page = page + 1;
-      if (page == numOfPages) {
-        page = numOfPages - 1;
+      if (page != numOfPages-1) {
+        page++;
       }
       redrawScreen();
     }
   }
+
+
+  
+  //_____________________________________________________________
+  //                           Lower
+  //_____________________________________________________________
+  if (Titles[page] == "Mouse") {
+    Tft.drawLine(0, 280, 320, 280, MAIN_COLOR);
+    drawString("Disabled", 20, 290, 2, MAIN_COLOR);
+    if (pY > 280 && pY < 320) {
+      mouseEnabled = !mouseEnabled;
+      startMouse();
+    }
+
+  }
+
+  else if (Titles[page] == "Home") {
+    //draw Logo
+    drawString("Pip-Boy", 15, 100, 5, MAIN_COLOR);
+    drawString("2OOO Mini", 40, 150, 3, MAIN_COLOR);
+
+    //draw Time
+    drawString((String)(int)hours, 55, 240, 4, MAIN_COLOR);
+    drawString(":", 105, 240, 4, MAIN_COLOR);
+    drawString((String)(int)minutes, 125, 240, 4, MAIN_COLOR);
+
+  }
+
+  else if (Titles[page] == "Settings"){
+    Tft.fillRectangle(70, 70, 100, 36, MAIN_COLOR);
+    drawString("Color",80 ,75, 2, BKG_COLOR);
+    if (pX < 60 && pX > 0 && pY < 60 && pY > 0) {
+      drawScreen(-1, -1);
+    }
+  }
+
+  else if (Titles[page] == "Overbright") {
+    if (pY > 60) {
+      if (overBright) {
+        setOverBright(false);
+      }
+      else if (!overBright) {
+        setOverBright(true);
+      }
+
+    }
+    drawString("Tap screen to", 45, 150, 2, MAIN_COLOR);
+    drawString("toggle OverBright", 20, 200, 2, MAIN_COLOR);
+  }
+  else {
+    drawString("There has been no backend written for this page", 10, 100, 1, MAIN_COLOR);
+  }
+
+
 }
 
 
