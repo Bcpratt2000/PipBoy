@@ -31,14 +31,14 @@ String Titles[] = {
 Point p;
 
 TouchScreen ts = TouchScreen (XP, YP, XM, YM);
-SoftwareSerial slave = SoftwareSerial(2, 3); //use pins 2 and 3 to talk to other chip
+SoftwareSerial slave = SoftwareSerial(2, 3); //tx=3; rx=2. Used to talk to other chip
 
 
 void setup() {
 
   Tft.TFTinit();
   Serial.begin(115200);
-  slave.begin(9600);
+  slave.begin(115200);
   redrawScreen();
 }//end setup
 
@@ -302,12 +302,17 @@ void startMouse() {
         else {
           moveX = p.x - oldX;
           moveY = p.y - oldY;
+
+          if(abs(moveX * mouseSensitivity) <=3)
+            moveX=0;
+          if(abs(moveY * mouseSensitivity) <=3)
+            moveY=0;
         }
         oldX = p.x;
         oldY = p.y;
 
       }
-      slave.println((int)'M');
+      slave.println('M');
       //change in x
       slave.println((int)(moveX * mouseSensitivity));
       //change in y
@@ -324,5 +329,5 @@ void startMouse() {
       isFirst = true;
     }
   }
-  delay(5);
+  delay(20);
 }
